@@ -1,0 +1,6 @@
+00 lda 0f
+01 sta 0c
+02 add 02
+03 sta 0d
+04 jmp 00
+0f ::: 0f

@@ -1,0 +1,75 @@
+`timescale 1ns/1ps
+
+module AddingCPU_tb;
+    reg reset, clk;
+    wire [5:0] adr_bus;
+    wire rd_mem, wr_mem;
+    wire [7:0] data_bus;
+    
+    // 64-byte memory array
+    reg [7:0] memory [0:63];
+    
+    // Instantiate the CPU
+    AddingCPU uut (
+        .reset(reset),
+        .clk(clk),
+        .adr_bus(adr_bus),
+        .rd_mem(rd_mem),
+        .wr_mem(wr_mem),
+        .data_bus(data_bus)
+    );
+    
+    // Generate clock (20ns period)
+    always #10 clk = ~clk;
+    
+    // Initialize memory and control signals
+    initial begin
+        // Initialize memory to 0
+        for (integer i = 0; i < 64; i = i + 1)
+            memory[i] = 8'h00;
+        
+        // Load program and data
+        memory[0]  = 8'h0F;   // LDA 0F
+        memory[1]  = 8'h4A;   // STA 0A
+        memory[2]  = 8'hC1;   // ADD 01
+        memory[3]  = 8'h4B;   // STA 0B
+        memory[4]  = 8'h80;   // JMP 00
+        memory[15] = 8'h0F;   // Data at 0F
+        
+        // Initialize control signals
+        clk = 0;
+        reset = 1;
+        
+        // Release reset after 2 clock cycles
+        #25 reset = 0;
+        
+        // Run for 405ns (enough for 5 instruction cycles)
+        #405;
+        
+        // Display memory contents
+        $display("\nMemory Contents (Address 0x00 to 0x0F):");
+        $display("-----------------------------------");
+        for (integer i = 0; i <= 15; i = i + 1) begin
+            $display("Address 0x%02h: 0x%02h", i, memory[i]);
+        end
+        $stop;
+    end
+    
+    // Memory read/write handling
+    assign data_bus = (rd_mem) ? memory[adr_bus] : 8'hzz;
+    
+    always @(posedge clk) begin
+        if (wr_mem) begin
+            memory[adr_bus] <= data_bus;
+            $display("Memory Write: Addr 0x%02h = 0x%02h", adr_bus, data_bus);
+        end
+    end
+    
+    // Monitor CPU signals
+    initial begin
+        $monitor("Time=%0t: PC=%02h IR=%02h AC=%02h State=%s Op=%02b",
+               $time, uut.dp.pc_value, uut.dp.ir_value, 
+               uut.dp.ac_value, uut.cu.state_name, uut.cu.op_code);
+    end
+    
+endmodule
