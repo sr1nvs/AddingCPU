@@ -1,6 +1,6 @@
 # AddingCPU
 
-This repository contains a complete Verilog replication of the AddingCPU example as presented in Zainalabedin Navabi's textbook Verilog Digital System Design. The project demonstrates a classic register-transfer level (RTL) CPU design, including datapath and controller modules, and provides a step-by-step testbench for simulation and verification.
+This repository contains a complete replication of the AddingCPU example as presented in Zainalabedin Navabi's textbook Verilog Digital System Design. The project demonstrates a classic register-transfer level (RTL) CPU design, including datapath and controller modules, and provides a step-by-step testbench for simulation and verification.
 
 Changes:
 
