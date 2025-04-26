@@ -4,6 +4,7 @@ This repository contains a complete replication of the AddingCPU example as pres
 
 Changes:
 
+- Gated clock (power optimization)
 - Added IDLE state to controller FSM
 - Added stepped execution
 - Added asm2hex.py - Converts "assembly" to hex file
